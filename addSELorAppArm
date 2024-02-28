@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Function to configure SELinux
+configure_selinux() {
+    echo "Configuring SELinux..."
+    # Check if SELinux is installed
+    if [ -x "$(command -v getenforce)" ]; then
+        # Check the current SELinux status
+        SELINUX_STATUS=$(getenforce)
+        if [ "$SELINUX_STATUS" != "Enforcing" ]; then
+            # Attempt to set SELinux to enforcing mode
+            sudo setenforce 1
+            sudo sed -i 's/^SELINUX=.*$/SELINUX=enforcing/' /etc/selinux/config
+            echo "SELinux set to enforcing mode."
+        else
+            echo "SELinux is already in enforcing mode."
+        fi
+    else
+        echo "SELinux is not installed on this system."
+    fi
+}
+
+# Function to configure AppArmor
+configure_apparmor() {
+    echo "Configuring AppArmor..."
+    # Check if AppArmor is installed
+    if [ -x "$(command -v aa-status)" ]; then
+        # Enable AppArmor
+        sudo systemctl enable apparmor
+        sudo systemctl start apparmor
+        # Check the current AppArmor status
+        APPARMOR_STATUS=$(sudo aa-status | grep "apparmor module is loaded")
+        if [ -n "$APPARMOR_STATUS" ]; then
+            echo "AppArmor is active and loaded."
+        else
+            echo "AppArmor could not be loaded."
+        fi
+    else
+        echo "AppArmor is not installed on this system."
+    fi
+}
+
+# Detect and configure SELinux or AppArmor based on the system
+echo "Detecting and configuring SELinux or AppArmor..."
+if [ -e /etc/selinux/config ]; then
+    configure_selinux
+elif [ -e /etc/apparmor.d ]; then
+    configure_apparmor
+else
+    echo "Neither SELinux nor AppArmor configurations were found. Skipping SELinux/AppArmor configuration."
+fi
+
+# The rest of the script remains unchanged...
