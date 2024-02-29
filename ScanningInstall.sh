@@ -16,4 +16,15 @@ sudo yum install rkhunter   # [On RHEL systems]
 
 #Run rkhunter:
 sudo rkhunter -c
- 
+
+
+ # Download and install clamav
+sudo apt install clamav  # Debian/Ubuntu
+
+sudo yum -y update
+sudo -y install clamav  #CentOS/RHEL
+
+#Run scan
+sudo clamscan -r -i /
+
+
