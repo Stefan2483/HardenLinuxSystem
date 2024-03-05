@@ -1,0 +1,5 @@
+# Disable Dangerous PHP Functions Edit the php.ini file to disable functions that can be exploited for RCE, such as exec(), shell_exec(), system(), passthru(), eval(), and others:
+disable_functions = exec,shell_exec,system,passthru,eval
+
+# Set strict file permissions on the web server. Use 755 for directories and 644 for files to limit executable permissions.
+
